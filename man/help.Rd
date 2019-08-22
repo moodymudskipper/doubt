@@ -12,16 +12,17 @@
 \item{e2}{rhs}
 }
 \description{
-`?` was modified to allow definition of new operators.
+`?` was modified to allow definition of new operators (unary, binary or n-ary).
+  We refer to those as "dubious" operators, both as a reference to the
+  package name and to emphasize the fact that they're not parsed as proper
+  operators.
+.
 Standard usage as documented in `?utils::Question` still works.
 }
 \details{
 Define any operator starting with `?` and that can be used in a way that is
 syntactically valid and it will be executed with the same operator precedence
 as `?`, which is just below assignment operations.
-
-This precedence makes these operators well suited for modified assignments or
-effects, where standard `%foo%` infix operators can sometimes are problematic.
 }
 \examples{
 # multiplication with precedence of `?`
@@ -30,7 +31,7 @@ effects, where standard `%foo%` infix operators can sometimes are problematic.
 # division  with precedence of `?`
 `?divide?` <- `/`
 1 + 2 ?divide? 3 + 4
-# more useful : assign a data frame to a csv file
+# more useful : write a data frame to a csv file
 \dontrun{
 `?csv<-` <- function(e1, e2) eval.parent(substitute(write.csv(e2, e1)))
 tempfile() ?csv<- cars
