@@ -5,6 +5,7 @@ reserved <-
 
 reserved_regex <- paste0("`(", paste0("(",reserved,")", collapse="|"),")`")
 
+#' @export
 `?julia>` <- function(..., fun = JuliaCall::julia_command){
   if(!requireNamespace("JuliaCall"))
     stop("Install package JuliaCall to use `?julia>` function")
@@ -21,4 +22,5 @@ reserved_regex <- paste0("`(", paste0("(",reserved,")", collapse="|"),")`")
   fun(code)
 }
 
+#' @export
 `?!julia>` <- function(...) `?julia>`(..., fun = JuliaCall::julia_eval)
