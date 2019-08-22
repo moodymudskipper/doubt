@@ -16,6 +16,6 @@
 .onAttach <- function(libname, pkgname) {
   current_ops <- getOption("doubt.registered_ops")
   package_ops <- c("?julia>", "?!julia>")
-  options(doubt.registered_ops = sort(union(current_ops, package_ops), decreasing = TRUE)
+  options(doubt.registered_ops = sort(union(current_ops, package_ops), decreasing = TRUE))
   invisible()
 }
