@@ -1,7 +1,7 @@
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.doubt <- list(
-    doubt.registered_ops = list(),
+    doubt.registered_ops = character(0),
     doubt.name = "Antoine Fabri",
     doubt.desc.author = "Antoine Fabri <antoine.fabri@gmail.com> [aut, cre]",
     doubt.desc.license = "GPL-3",
@@ -16,6 +16,6 @@
 .onAttach <- function(libname, pkgname) {
   current_ops <- getOption("doubt.registered_ops")
   package_ops <- c("?julia>", "?!julia>")
-  options(doubt.registered_ops = union(current_ops, package_ops))
+  options(doubt.registered_ops = sort(union(current_ops, package_ops), decreasing = TRUE)
   invisible()
 }
