@@ -1,8 +1,16 @@
 regex.escape <- function(string) {
-  gsub("([][{}()+*^$|\\\\?])", "\\\\\\1", string)
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", string)
 }
 
-double_qm_pattern <- "^.*?\\?(.*?)\\?.*$"
+# two question marks surrounding any legal function name
+double_qm_pattern <- "^[^?]*?(\\?([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
+
+
+op_qm_pattern <- "^.*?(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
+# the following to get several matches
+op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)"
+
+#dubious_pattern <- "^.*?[([0-9a-z_.]*)\\?.*$"
 
 #' Modified question mark operator
 #'
@@ -13,9 +21,22 @@ double_qm_pattern <- "^.*?\\?(.*?)\\?.*$"
 #' .
 #' Standard usage as documented in `?utils::Question` still works.
 #'
-#' Define any operator starting with `?` and that can be used in a way that is
+#' Every accessible function, custom defined or base/packaged, can be called as
+#'  an infix operator, for example `1:5 %%intersect? 3:7` is equivalent to
+#'  `intersect(1:5, 3:7)`. In that case, `%%intersect?` will have the precedence
+#'  of `%%`, which is the most intuitive,
+#' but any precedence including and below unary `+` can be used, for instance
+#' `*intersect?` will have the precedence of `*`.
+#'
+#' N-ary operators are supported for `?foo?` operators, for instance
+#' `?paste? "a" ? "b" ? "c"` is the same as `paste("a", "b", "c")`,
+#' `"a" ?paste? "b" ? "c"` works as well.
+#'
+#' Define any operator containing `?` and that can be used in a way that is
 #' syntactically valid and it will be executed with the same operator precedence
-#' as `?`, which is just below assignment operations.
+#' as `?`, which is just below `<-` and just above `=` (note that `?Syntax` is
+#' inaccurate in this regard at time of writing). In practice this mean you can
+#' assign with `x = "a" ?paste? "b" ? "c"` but not with `x <- "a" ?paste? "b" ? "c"`
 #'
 #'
 #' @param e1 lhs
@@ -37,44 +58,60 @@ double_qm_pattern <- "^.*?\\?(.*?)\\?.*$"
   call <- sys.call()
   # get called expression, or close enough
   # (`rlang::expr_deparse()` works better than `base::deparse()`)
-  txt <- rlang::expr_deparse(call)
-  # repair expression if they started with "??"
-  txt <- sub("\\? \\(\\?(.*)\\)$","??\\1",txt)
+  txt <- deparse_rec(call)
   # look in parent environment for operators starting with `?`
   ops <- ls(pattern = "\\?", envir = .GlobalEnv)
-  #ops <- ls(pattern = "^\\?.+$", envir = .GlobalEnv)
   # add the registered operators to the list
   ops <- c(ops,getOption("doubt.registered_ops"))
   # Make patterns out of those, allowing for extra spaces
-  patterns <- sapply(strsplit(ops,""), function(x) paste(regex.escape(x), collapse="\\s*"))
+  patterns <- regex.escape(ops)
   # find all matches
   matches_lgl <- sapply(patterns, grepl, txt, USE.NAMES = FALSE)
+
   if(any(matches_lgl)){
-    # take the last match, which should be the longest in case of multiple matches
-    match_index <- length(ops) + 1 - which.max(rev(matches_lgl))
-    # split the statement in two around the operator
-    lhs_rhs <- strsplit(txt, patterns[match_index])[[1]]
-    # remove empty side if relevant
-    if(lhs_rhs[[1]] == "") lhs_rhs <- lhs_rhs[-1]
-    # split further by question mark symbol to get the arguments
-    args_chr <- trimws(unlist(strsplit(lhs_rhs,"?", TRUE)))
-    # parse the arguments
-    args <- unname(sapply(args_chr, parse, file="", n = NULL))
-    # build call from relevant function and parsed arguments
-    call <- as.call(c(as.symbol(ops[match_index]),args))
+    # if we match a registered/packaged/globally defined op
+    call <- build_registered_op_call(txt, matches_lgl, patterns, ops)
     # execute call in calling environment
-    eval.parent(call)
+    return(eval.parent(call))
   } else if (grepl(double_qm_pattern, txt)){
-    fun_chr <- trimws(gsub(double_qm_pattern, "\\1", txt))
-    op <- get0(fun_chr)
-    if(is.null(op)) stop(sprintf("no function named '%s' was found", fun_chr))
-    lhs_rhs <- strsplit(txt, paste0("\\?\\s*",fun_chr," \\?"))[[1]]
-    args_chr <- trimws(unlist(strsplit(lhs_rhs,"?", TRUE)))
-    args <- unname(sapply(args_chr, parse, file="", n = NULL))
-    call <- as.call(c(as.symbol(fun_chr),args))
-    eval.parent(call)
-  } else {
-    `?` <- utils::`?`
-    eval(call)
+    # handle `?<fun>?` operator if what we found is relevant
+    call <- build_double_qm_call(txt, double_qm_pattern)
+    if(!is.null(call)) return(eval.parent(call))
   }
+
+  if (grepl(op_qm_pattern, txt)){
+    # handle `<op><fun>?` operator if what we found is relevant
+    call_and_ops <- build_op_qm_call_and_ops(txt, op_qm_pattern2)
+    return(eval(call_and_ops$call, envir=call_and_ops$ops, enclos = parent.frame()))
+
+    # call_and_1op <- build_op_qm_call_and_1op(txt, op_qm_pattern)
+    # return(eval(call_and_1op$call, envir=call_and_1op$op, enclos = parent.frame()))
+  }
+
+  `?` <- get_fallback_qm()
+  eval(call)
 }
+
+
+
+
+
+#
+# regularize <- function(call){
+#   if(!is.call(call)) return(call)
+#   if(calls_unary_plus(call)){
+#     call[[1]] <- op
+#     call[[2]] <- call[[2]][[1]]
+#     call
+#   } else {
+#     as.call(lapply(call, regularize))
+#   }
+# }
+#
+#
+# calls_unary_plus <- function(call){
+#   length(call) > 1 && length(call[[3]]) == 2 && identical(call[[3]][[1]],quote(`+`))
+# }
+#
+# call <- quote(y -+a / b)
+# calls_unary_plus(quote(y /+a + b))

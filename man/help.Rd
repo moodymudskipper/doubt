@@ -20,9 +20,22 @@
 Standard usage as documented in `?utils::Question` still works.
 }
 \details{
-Define any operator starting with `?` and that can be used in a way that is
+Every accessible function, custom defined or base/packaged, can be called as
+ an infix operator, for example `1:5 %%intersect? 3:7` is equivalent to
+ `intersect(1:5, 3:7)`. In that case, `%%intersect?` will have the precedence
+ of `%%`, which is the most intuitive,
+but any precedence including and below unary `+` can be used, for instance
+`*intersect?` will have the precedence of `*`.
+
+N-ary operators are supported for `?foo?` operators, for instance
+`?paste? "a" ? "b" ? "c"` is the same as `paste("a", "b", "c")`,
+`"a" ?paste? "b" ? "c"` works as well.
+
+Define any operator containing `?` and that can be used in a way that is
 syntactically valid and it will be executed with the same operator precedence
-as `?`, which is just below assignment operations.
+as `?`, which is just below `<-` and just above `=` (note that `?Syntax` is
+inaccurate in this regard at time of writing). In practice this mean you can
+assign with `x = "a" ?paste? "b" ? "c"` but not with `x <- "a" ?paste? "b" ? "c"`
 }
 \examples{
 # multiplication with precedence of `?`
