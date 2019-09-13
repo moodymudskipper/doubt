@@ -1,13 +1,14 @@
 Package: doubt
-Title: enable operators starting with "?"
+Title: Enable operators containing "?"
 Version: 0.0.0.9000
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
-Description: overload utils::`?` to be able to define more operators with the same precedence  
+Description: Overload utils::`?` to be able to define more operators with chosen precedence.  
 Depends: R (>= 3.1.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Imports: 
-    rlang,
     utils
+Suggests: 
+    testthat (>= 2.1.0)
