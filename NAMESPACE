@@ -2,4 +2,7 @@
 
 export("?!julia>")
 export("?")
+export("?grViz>")
 export("?julia>")
+export(arity)
+export(register_ops)
