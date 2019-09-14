@@ -12,3 +12,4 @@ Imports:
     utils
 Suggests: 
     testthat (>= 2.1.0)
+Roxygen: list(markdown = TRUE)

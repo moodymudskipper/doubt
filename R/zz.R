@@ -12,10 +12,3 @@
   if(any(toset)) options(op.doubt[toset])
   invisible()
 }
-
-.onAttach <- function(libname, pkgname) {
-  current_ops <- unlist(getOption("doubt.registered_ops"))
-  package_ops <- c("?julia>", "?!julia>", "?grViz>")
-  options(doubt.registered_ops = sort(union(current_ops, package_ops), decreasing = TRUE))
-  invisible()
-}
