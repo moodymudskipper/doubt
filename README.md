@@ -1,5 +1,6 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Travis build
+status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://travis-ci.org/moodymudskipper/doubt)
 
 # doubt
 
@@ -197,12 +198,18 @@ To be recognized by *doubt* a custom operator must either :
 
 ### Registering a custom dubious op in a package
 
-To use a custom dubious operator your package should either depend on
-*doubt* or import it and reexport `?`.
+To use a custom dubious operator your package should import *doubt* and
+reexport . You can do so by adding this code to your package if you use
+*roxygen2*:
 
-In the future *doubt* should export only `?` so it should be clean to
-import it, so we don’t have different versions of `?` overriding each
-other.
+``` r
+#' Modified question mark operator
+#'
+#' Reexported from package *doubt*
+#' @inheritParams doubt::`?`
+#' @export
+`?` <- doubt::`?`
+```
 
 Additionally you should add an `.onAttach` function to your package
 (usually done in a `zz.R` file) or edit yours so it updates *doubt*’s
@@ -210,7 +217,7 @@ options, as in the following :
 
 ``` r
 .onAttach <- function(libname, pkgname) {
-  doubt::register_ops(c("?!", "?!!"))
+  doubt::register_ops(c("?!", "?!!")) # where `?!` and `?!!` would be your ops
   invisible()
 }
 ```
@@ -231,7 +238,6 @@ interactively.
 
 ``` r
 library(dplyr)
-#> Warning: package 'dplyr' was built under R version 3.6.1
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':

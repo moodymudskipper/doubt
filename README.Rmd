@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Travis build status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://travis-ci.org/moodymudskipper/doubt)
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -176,10 +176,17 @@ To be recognized by *doubt* a custom operator must either :
 
 ### Registering a custom dubious op in a package
 
-To use a custom dubious operator your package should either depend on *doubt* or import it and reexport `?`.
+To use a custom dubious operator your package should import *doubt* and reexport \code{doubt::`?`}. You can do so by adding this code to your package if you use
+*roxygen2*:
 
-In the future *doubt* should export only `?` so it should be clean to import it,
-so we don't have different versions of `?` overriding each other.
+```{r, eval = FALSE}
+#' Modified question mark operator
+#'
+#' Reexported from package *doubt*
+#' @inheritParams doubt::`?`
+#' @export
+`?` <- doubt::`?`
+```
 
 Additionally you should add an `.onAttach` function to your package (usually
 done in a `zz.R` file) or edit yours so it updates
@@ -187,7 +194,7 @@ done in a `zz.R` file) or edit yours so it updates
 
 ```{r}
 .onAttach <- function(libname, pkgname) {
-  doubt::register_ops(c("?!", "?!!"))
+  doubt::register_ops(c("?!", "?!!")) # where `?!` and `?!!` would be your ops
   invisible()
 }
 ```
