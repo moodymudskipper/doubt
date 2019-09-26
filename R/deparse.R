@@ -56,25 +56,31 @@ std_fn_deparse      <- function(...) sprintf("%s(%s)",..1,paste(c(...)[-1], coll
 parse_qm_args <- function(x){
   x <- str2lang(x)
   # if single symbol
-  if(is.symbol(x)) return(x)
-  if(length(x) == 2 && x[[1]] == quote(`?`)) return(x[[2]])
-  i <- numeric(0)
-  out <- character(0)
-  while((!length(i) || length(x[[i]]) == 3) &&
-        identical(x[[c(i,1)]], quote(`?`))
-        ){
-    out <- c(x[[c(i,3)]],out)
-    i <- c(2, i)
+  if(length(x)==1) return(x)
+  # if length 2 parse if it is a unary `?` call, else return as is
+  if(length(x) == 2) {
+    if (x[[1]] == quote(`?`)) return(x[[2]]) else return(x)
   }
-  # if no `?` was found
+  i <- numeric(0)
+  out <- list()
+  # as long as we have binary `?` calls
+  while(length(x) == 3 && x[[1]] == quote(`?`)){
+    out <- c(x[[3]],out)
+    if(length(x[[3]]) == 2 && x[[c(3,1)]] == quote(`?`))
+      stop("missing arguments between consecutive `?` are not supported")
+    x <- x[[2]]
+  }
+  # if no `?` was found, return as is
   if(!length(out)) return(x)
 
-  if(length(x[[i]]) == 2) {
-    # if we have a unary `?` fetch its arg
-    out <-  c(x[[c(i,2)]],out)
+  # if we have a unary `?` call remaining return its arg, else return remaining as is
+  if(length(x) == 2 && x[[1]] == quote(`?`)) {
+    x <- x[[2]]
+    if(length(x) == 2 && x[[1]] == quote(`?`))
+      stop("missing arguments between consecutive `?` are not supported")
+    out <-  c(x,out)
   } else {
-    # if we have a binary `?` fetch the its first arg
-    out <-  c(x[[c(i)]], out)
+    out <-  c(x, out)
   }
   out
 }
