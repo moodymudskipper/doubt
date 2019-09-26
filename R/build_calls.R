@@ -13,8 +13,6 @@ build_registered_op_call <- function(txt, matches_lgl, patterns, ops){
 
 
 build_op_qm_call_and_ops <- function(txt, pattern) {
-  # this gets out all the matches if the 2nd regex is used, rest of the code is not
-  # adapted yet
 
   m_all <- gregexpr(pattern, txt, perl = TRUE)[[1]]
   capture_matrix <- matrix(ncol=3,substring(txt, attr(m_all, "capture.start") , attr(
