@@ -79,10 +79,10 @@ build_op_qm_call_and_ops <- function(txt, pattern) {
 build_double_qm_call <- function(txt, double_qm_pattern){
   fun_chr <- gsub(double_qm_pattern, "\\2", txt)
   op <- get0(fun_chr)
-  if(!is.null(op)) {
-    lhs_rhs <- strsplit(txt, paste0("\\?",fun_chr,"\\?"))[[1]]
-    args_chr <- unlist(strsplit(lhs_rhs,"?", TRUE))
-    args <- parse(text= args_chr)
-    call <- as.call(c(as.symbol(fun_chr),args))
-  } else NULL
+  if(is.null(op)) stop(sprintf("no function named '%s' was found", fun_chr))
+
+  lhs_rhs <- strsplit(txt, paste0("\\?",fun_chr,"\\?"))[[1]]
+  args_chr <- unlist(strsplit(lhs_rhs,"?", TRUE))
+  args <- parse(text= args_chr)
+  call <- as.call(c(as.symbol(fun_chr),args))
 }
