@@ -4,12 +4,9 @@ build_registered_op_call <- function(txt, matches_lgl, patterns, ops){
   match_index <- which.max(nchar(patterns) * matches_lgl)
   # split the statement in two around the operator
   lhs_rhs <- strsplit(txt, patterns[match_index])[[1]]
-  # remove empty side if relevant
-  if(lhs_rhs[[1]] == "") lhs_rhs <- lhs_rhs[-1]
-  # split further by question mark symbol to get the arguments
-  args_chr <- unlist(strsplit(lhs_rhs,"?", fixed = TRUE))
-  # parse the arguments
-  args <- unname(sapply(args_chr, parse, file="", n = NULL))
+  lhs_rhs <- lhs_rhs[lhs_rhs != ""]
+  args <- unlist(lapply(lhs_rhs, parse_qm_args))
+
   # build call from relevant function and parsed arguments
   call <- as.call(c(as.symbol(ops[match_index]),args))
 }
