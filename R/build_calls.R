@@ -28,7 +28,7 @@ build_op_qm_call_and_ops <- function(txt, pattern) {
   funs_exist_lgl[names(funs_exist_lgl) == "."] <- TRUE
   if(!all(funs_exist_lgl))
     stop(sprintf("no function named '%s' was found",
-                 fun_chr_all[funs_exist_lgl]))
+                 fun_chr_all[!funs_exist_lgl]))
   dubious_op_all    <- capture_matrix[,1] # e.g %%foo?
   precedence_op_all <- capture_matrix[,2] # e.g. %%
   indices <- ave(seq_along(precedence_op_all), precedence_op_all, FUN = seq_along)
