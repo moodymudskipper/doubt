@@ -14,11 +14,13 @@ qm_summarize_splice <- function(expr){
   data <- eval.parent(quote(.),4)
   group_vars <- dplyr::group_vars(data)
 
+  # maybe no `:=` should mean all ?
 
-  if (is.symbol(expr)) expr <- list(expr)
-  if(expr[[1]] != quote(`:=`)){
-    lhs <- eval(expr[[1]])
-    apply_fun <- identity
+  # if (is.symbol(expr)) expr <- list(expr)
+
+  if(is.symbol(expr) || expr[[1]] != quote(`:=`)){
+    lhs <- eval(quote(vars(everything())))
+    apply_fun <- rlang::as_function(eval(expr))
   } else {
     lhs <- eval(expr[[2]])
     apply_fun <- rlang::as_function(eval(expr[[3]]))
@@ -46,14 +48,25 @@ qm_mutate_splice <- function(expr){
   data <- eval.parent(quote(.),4)
   group_vars <- dplyr::group_vars(data)
 
-
-  if (is.symbol(expr)) expr <- list(expr)
-  if(expr[[1]] != quote(`:=`)){
-    lhs <- eval(expr[[1]])
-    apply_fun <- identity
+  if(
+    # if is function
+    is.symbol(expr) && !is.null(get0(deparse(expr))) ||
+    # or is litteral formula
+    expr[[1]] == quote(`~`)
+    ){
+    # apply to all
+    lhs <- eval(quote(vars(everything())))
+    apply_fun <- rlang::as_function(eval(expr))
   } else {
-    lhs <- eval(expr[[2]])
-    apply_fun <- rlang::as_function(eval(expr[[3]]))
+    # if we get a symbol which isn't a function, assume it's a single column name
+    if (is.symbol(expr)) expr <- list(expr)
+    if(expr[[1]] != quote(`:=`)){
+      lhs <- eval(expr)
+      apply_fun <- identity
+    } else {
+      lhs <- eval(expr[[2]])
+      apply_fun <- rlang::as_function(eval(expr[[3]]))
+    }
   }
 
   if(is.function(lhs) || inherits(lhs, "formula")){
@@ -64,7 +77,11 @@ qm_mutate_splice <- function(expr){
     vars <- lhs
   }
   #if(expr[[1]] != quote(`:=`)) stop("invalid expression, form must be `?detect_fun := apply_fun`")
-
+  # remove group vars
+  if(length(group_vars)){
+    if (is.character(vars)) vars <- dplyr::vars(!!!vars)
+    vars <- c(vars, vars(!!!as.list(parse(text=paste0("-",group_vars)))))
+    }
   res <- transmute_at(data,vars, apply_fun) %>%
     ungroup() %>%
     select(-one_of(group_vars))
