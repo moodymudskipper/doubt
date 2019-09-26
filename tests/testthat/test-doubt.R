@@ -82,3 +82,9 @@ test_that("parsing n-ary args are parsed correctly", {
   expect_equal(parse_qm_args("?a?b"),list(quote(a), quote(b)))
   expect_equal(parse_qm_args("?a"),quote(a))
 })
+
+
+test_that("double qm ops can be used with op qm ops", {
+  expect_equal(?dim? iris +head? 2, c(2,5))
+  expect_equal(?head? (+dim? iris) ? 1,150)
+})

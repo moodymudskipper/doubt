@@ -65,9 +65,15 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
   ops <- c(ops,getOption("doubt.registered_ops"))
   # Make patterns out of those, allowing for extra spaces
   patterns <- regex.escape(ops)
+
+  if (grepl(op_qm_pattern, txt)){
+    # handle `<op><fun>?` operator if what we found is relevant
+    call_and_ops <- build_op_qm_call_and_ops(txt, op_qm_pattern2)
+    return(eval(call_and_ops$call, envir=call_and_ops$ops, enclos = parent.frame()))
+  }
+
   # find all matches
   matches_lgl <- sapply(patterns, grepl, txt, USE.NAMES = FALSE)
-
   if(any(matches_lgl)){
     # if we match a registered/packaged/globally defined op
     call <- build_registered_op_call(txt, matches_lgl, patterns, ops)
@@ -79,14 +85,6 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
     if(!is.null(call)) return(eval.parent(call))
   }
 
-  if (grepl(op_qm_pattern, txt)){
-    # handle `<op><fun>?` operator if what we found is relevant
-    call_and_ops <- build_op_qm_call_and_ops(txt, op_qm_pattern2)
-    return(eval(call_and_ops$call, envir=call_and_ops$ops, enclos = parent.frame()))
-
-    # call_and_1op <- build_op_qm_call_and_1op(txt, op_qm_pattern)
-    # return(eval(call_and_1op$call, envir=call_and_1op$op, enclos = parent.frame()))
-  }
 
   `?` <- get_fallback_qm()
   eval(call)
