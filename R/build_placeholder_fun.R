@@ -39,7 +39,7 @@ build_placeholder_fun2 <- function(funs_chr, precedence_op){
   body <- substitute({
     sc <- sys.call()
     # last_arg is the rhs if binary or the rhs if unary
-    last_arg <- deparse(sc[[length(sc)]])
+    last_arg <- paste(deparse(sc[[length(sc)]]),collapse="")
 
     n_plus <- count_plus(last_arg)
     if(n_plus > 0){
