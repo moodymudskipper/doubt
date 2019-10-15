@@ -1,7 +1,24 @@
+# ops <- c("while", "for","if",
+#          "?", "<-", "<<-", "=",
+#          ":=", "~", "|", "||",
+#          "&", "&&", ">", ">=",
+#          "<", "<=", "==", "!=",
+#          "+", "-", "*", "/",
+#          "%%", ":",
+#          "^", "$", "@", "::",
+#          ":::",
+#          "[" , "[[" , "{", "(", "!")
 
 deparse_rec <- function(call){
-  if(!is.call(call)) return(deparse(call))
-  call_deparsed <- lapply(call, deparse_rec)
+  if(!is.call(call)) {
+    if (is.symbol(call)){
+      call <- as.character(call)
+      if(!is_syntactic(call)) call <- paste0("`",call,"`")
+      return(call)
+    } else
+      return(deparse(call))
+  }
+  call_deparsed <- c(list(deparse(call[[1]])),lapply(call[-1], deparse_rec))
   all_nms <- allNames(call_deparsed)
   all_nms <- all_nms[all_nms!=""]
   call_deparsed[all_nms] <-
