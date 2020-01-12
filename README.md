@@ -6,7 +6,7 @@ status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://
 [![Codecov test
 coverage](https://codecov.io/gh/moodymudskipper/doubt/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/doubt?branch=master)
 
-# doubt
+## Overview
 
 *doubt* overrides the operator `?` to provide:
 
@@ -83,8 +83,8 @@ library(microbenchmark)
 }
 #> Unit: microseconds
 #>  expr  min   lq   mean median    uq   max neval cld
-#>     a 13.3 14.5 22.083  15.55 23.65  75.9   100   a
-#>     b 16.2 17.7 32.915  19.60 34.65 713.0   100   a
+#>     a 13.8 14.3 16.517   14.7 15.25  74.4   100   a
+#>     b 16.0 16.7 27.546   17.4 18.50 910.2   100   a
 
 library(shiny)
 cat(as.character(

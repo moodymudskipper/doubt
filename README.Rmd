@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# doubt
+## Overview
 
 *doubt* overrides the operator `?` to provide:
 
