@@ -61,7 +61,6 @@ deparse_rec <- function(call, first = FALSE){
   do.call(deparser, call_deparsed)
 }
 
-function_deparse       <- function(...) sprintf("%s(%s) %s", ...)
 while_deparse       <- function(...) sprintf("%s(%s) %s", ...)
 for_deparse         <- function(...) sprintf("%s(%s in %s) %s", ...)
 repeat_deparse      <- function(...) sprintf("%s %s", ...)
