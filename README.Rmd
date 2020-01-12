@@ -4,6 +4,8 @@ output: github_document
 
 [![Travis build status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://travis-ci.org/moodymudskipper/doubt)
 
+[![Codecov test coverage](https://codecov.io/gh/moodymudskipper/doubt/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/doubt?branch=master)
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,

@@ -2,6 +2,9 @@
 [![Travis build
 status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://travis-ci.org/moodymudskipper/doubt)
 
+[![Codecov test
+coverage](https://codecov.io/gh/moodymudskipper/doubt/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/doubt?branch=master)
+
 # doubt
 
 *doubt* overrides the operator `?` to provide:
@@ -78,9 +81,9 @@ library(microbenchmark)
   b= lengths(iris)
 }
 #> Unit: microseconds
-#>  expr  min   lq   mean median    uq    max neval cld
-#>     a 13.7 16.2 43.013  26.50 39.85 1334.6   100   a
-#>     b 16.6 18.5 33.882  29.85 44.40   76.4   100   a
+#>  expr  min    lq   mean median    uq    max neval cld
+#>     a 13.8 14.80 33.023   16.6 29.50 1053.4   100   a
+#>     b 16.0 17.35 28.383   19.1 38.95   80.3   100   a
 
 library(shiny)
 cat(as.character(

@@ -1,8 +1,9 @@
 Package: doubt
-Title: Enable operators containing "?"
+Title: Enable Operators Containing "?"
 Version: 0.0.0.9001
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
-Description: Overload utils::`?` to be able to define more operators with chosen precedence.  
+Description: Overload utils::`?` to build unary and binary operators from existing functions, 
+    piping operators of different precedences, and flexible syntaxes.  
 Depends: R (>= 3.1.0)
 License: GPL-3
 Encoding: UTF-8
@@ -13,5 +14,6 @@ Imports:
     methods,
     unglue
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    covr
 Roxygen: list(markdown = TRUE)
