@@ -1,3 +1,9 @@
+
+#' @importFrom stats ave
+NULL
+
+
+# nocov start
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.doubt <- list(
@@ -12,3 +18,10 @@
   if(any(toset)) options(op.doubt[toset])
   invisible()
 }
+# nocov end
+
+# for development with devtools, as devtools masks `?` and we don't want
+# it in our global env
+# doubt0 <- list(`?` = doubt::`?`)
+# attach(doubt0)
+

@@ -6,6 +6,7 @@ regex.escape <- function(string) {
 double_qm_pattern <- "^[^?]*?(\\?([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
 
 
+
 op_qm_pattern <- "^.*?(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
 # the following to get several matches
 op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)"
@@ -42,51 +43,42 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
 #' @param e1 lhs
 #' @param e2 rhs
 #' @examples
-#' # multiplication with precedence of `?`
-#' `?~` <- `*`
-#' 1 + 2 ?~ 3 + 4
-#' # division  with precedence of `?`
-#' `?divide?` <- `/`
-#' 1 + 2 ?divide? 3 + 4
-#' # more useful : write a data frame to a csv file
-#' \dontrun{
-#' `?csv<-` <- function(e1, e2) eval.parent(substitute(write.csv(e2, e1)))
-#' tempfile() ?csv<- cars
-#' }
+#' cars +head? 2
+#' +head? cars
+#' +head? {
+#'   cars
+#'   2}
 #' @export
 `?` <- function(e1,e2){
   call <- sys.call()
   # get called expression, or close enough
   # (`rlang::expr_deparse()` works better than `base::deparse()`)
   txt <- deparse_rec(call)
-  # look in parent environment for operators starting with `?`
-  ops <- ls(pattern = "\\?", envir = .GlobalEnv)
-  # add the registered operators to the list
-  ops <- c(ops,getOption("doubt.registered_ops"))
-  # Make patterns out of those, allowing for extra spaces
-  patterns <- regex.escape(ops)
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # handle `<op><fun>?` operators
 
   if (grepl(op_qm_pattern, txt)){
-    # handle `<op><fun>?` operator if what we found is relevant
     call_and_ops <- build_op_qm_call_and_ops(txt, op_qm_pattern2)
+    # message("call_and_ops$call")
+    # print(call_and_ops$call)
     return(eval(call_and_ops$call, envir=call_and_ops$ops, enclos = parent.frame()))
   }
 
-  # find all matches
-  matches_lgl <- sapply(patterns, grepl, txt, USE.NAMES = FALSE)
-  if(any(matches_lgl)){
-    # if we match a registered/packaged/globally defined op
-    call <- build_registered_op_call(txt, matches_lgl, patterns, ops)
-    # execute call in calling environment
-    return(eval.parent(call))
-  } else if (grepl(double_qm_pattern, txt)){
-    # handle `?<fun>?` operator if what we found is relevant
-    call <- build_double_qm_call(txt, double_qm_pattern)
-    if(!is.null(call)) return(eval.parent(call))
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # handle special syntax operators
+  ops <- ls(pattern = "\\?", envir = .GlobalEnv)
+  ops <- unique(c(ops,getOption("doubt.registered_ops")))
+  ops_compact <- gsub(" ", "", ops)
+  ops_lgl <- sapply(ops_compact, unglue::unglue_detect, x = txt)
+  if(any(ops_lgl)){
+  if(sum(ops_lgl) > 1) {
+    stop("Ambiguous syntax caused by operators: ", toString(ops[ops_lgl]))
+  }
+  args <- unglue::unglue(txt, ops_compact[ops_lgl])[[1]]
+  return(eval(as.call(parse(text=c(paste0("`",ops[ops_lgl], "`"), args)))))
   }
 
-
-  `?` <- get_fallback_qm()
+  `?` <- utils::`?`
   eval(call)
 }
 
@@ -113,3 +105,6 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
 #
 # call <- quote(y -+a / b)
 # calls_unary_plus(quote(y /+a + b))
+
+
+

@@ -4,7 +4,7 @@
 \alias{?}
 \title{Modified question mark operator}
 \usage{
-"?"(e1, e2)
+`?`(e1, e2)
 }
 \arguments{
 \item{e1}{lhs}
@@ -12,7 +12,7 @@
 \item{e2}{rhs}
 }
 \description{
-\code{?} was modified to allow definition of new operators (unary, binary or n-ary).
+\verb{?} was modified to allow definition of new operators (unary, binary or n-ary).
 We refer to those as "dubious" operators, both as a reference to the
 package name and to emphasize the fact that they're not parsed as proper
 operators.
@@ -22,31 +22,25 @@ Standard usage as documented in \code{?utils::Question} still works.
 \details{
 Every accessible function, custom defined or base/packaged, can be called as
 an infix operator, for example \code{1:5 \%\%intersect? 3:7} is equivalent to
-\code{intersect(1:5, 3:7)}. In that case, \code{\%\%intersect?} will have the precedence
+\code{intersect(1:5, 3:7)}. In that case, \verb{\%\%intersect?} will have the precedence
 of \code{\%\%}, which is the most intuitive,
 but any precedence including and below unary \code{+} can be used, for instance
-\code{*intersect?} will have the precedence of \code{*}.
+\verb{*intersect?} will have the precedence of \code{*}.
 
-N-ary operators are supported for \code{?foo?} operators, for instance
+N-ary operators are supported for \verb{?foo?} operators, for instance
 \code{?paste? "a" ? "b" ? "c"} is the same as \code{paste("a", "b", "c")},
 \code{"a" ?paste? "b" ? "c"} works as well.
 
-Define any operator containing \code{?} and that can be used in a way that is
+Define any operator containing \verb{?} and that can be used in a way that is
 syntactically valid and it will be executed with the same operator precedence
-as \code{?}, which is just below \code{<-} and just above \code{=} (note that \code{?Syntax} is
+as \verb{?}, which is just below \verb{<-} and just above \code{=} (note that \code{?Syntax} is
 inaccurate in this regard at time of writing). In practice this mean you can
 assign with \code{x = "a" ?paste? "b" ? "c"} but not with \code{x <- "a" ?paste? "b" ? "c"}
 }
 \examples{
-# multiplication with precedence of `?`
-`?~` <- `*`
-1 + 2 ?~ 3 + 4
-# division  with precedence of `?`
-`?divide?` <- `/`
-1 + 2 ?divide? 3 + 4
-# more useful : write a data frame to a csv file
-\dontrun{
-`?csv<-` <- function(e1, e2) eval.parent(substitute(write.csv(e2, e1)))
-tempfile() ?csv<- cars
-}
+cars +head? 2
++head? cars
++head? {
+  cars
+  2}
 }

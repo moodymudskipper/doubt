@@ -1,37 +1,124 @@
-test_that("default dubious ops work", {
-  expect_equal(head(cars,2), cars ?head? 2)
+
+test_that("binary dubious ops work", {
+  expect_equal(head(cars,2), cars ^head? 2)
+  expect_equal(head(cars,2), cars :head? 2)
+  expect_equal(head(cars,2), cars %%head? 2)
+  expect_equal(head(cars,2), cars *head? 2)
+  expect_equal(head(cars,2), cars /head? 2)
   expect_equal(head(cars,2), cars +head? 2)
+  expect_equal(head(cars,2), cars -head? 2)
+  expect_equal(head(cars,2), cars <head? 2)
+  expect_equal(head(cars,2), cars >head? 2)
+  expect_equal(head(cars,2), cars <=head? 2)
+  expect_equal(head(cars,2), cars >=head? 2)
+  expect_equal(head(cars,2), cars ==head? 2)
+  expect_equal(head(cars,2), cars !=head? 2)
+  expect_equal(head(cars,2), cars &head? 2)
+  expect_equal(head(cars,2), cars &&head? 2)
+  expect_equal(head(cars,2), cars |head? 2)
+  expect_equal(head(cars,2), cars ||head? 2)
+  expect_equal(head(cars,2), cars ~head? 2)
+  expect_equal(head(cars,2), cars <-head? 2)
+  expect_equal(head(cars,2), cars <<-head? 2)
 })
+
+test_that("unary dubious ops work", {
+  expect_equal(head(cars), +head? cars )
+  expect_equal(head(cars), -head? cars )
+  expect_equal(head(cars), !head? cars )
+  expect_equal(head(cars), ~head? cars )
+})
+
+test_that("'+' can be used right after a binary op", {
+  expect_equal(1:4 ^head? 2  + 1, 1:head(4, 2) + 1)
+  expect_equal(1:4 -head? 2  + 1, head(1:4, 2) + 1)
+  expect_equal(1:4 +head? 2  + 1, head(1:4, 2) + 1)
+  expect_equal(1:4 ~head? 2  + 1, head(1:4, 2 + 1)) # here `+` is IN the argument
+})
+
+test_that("'-' can be used right after a binary op", {
+  expect_equal(1:4 ^head? 2  - 1, 1:head(4, 2) - 1)
+  expect_equal(1:4 -head? 2  - 1, head(1:4, 2) - 1)
+  expect_equal(1:4 +head? 2  - 1, head(1:4, 2) - 1)
+  expect_equal(1:4 ~head? 2  - 1, head(1:4, 2 - 1)) # here `-` is IN the argument
+})
+
+test_that("'+' can be used right after an unnary op", {
+  expect_equal( +sqrt? 4  + 1, sqrt(4) + 1)
+  expect_equal( -sqrt? 4  + 1, sqrt(4) + 1)
+  expect_equal( !sqrt? 4  + 1, sqrt(4 + 1)) # here `+` is IN the argument
+  expect_equal( ~sqrt? 4  + 1, sqrt(4 + 1)) # here `+` is IN the argument
+})
+
+test_that("'-' can be used right after an unnary op", {
+  expect_equal( +sqrt? 4  - 1, sqrt(4) - 1)
+  expect_equal( -sqrt? 4  - 1, sqrt(4) - 1)
+  expect_equal( !sqrt? 4  - 1, sqrt(4 - 1)) # here `-` is IN the argument
+  expect_equal( ~sqrt? 4  - 1, sqrt(4 - 1)) # here `-` is IN the argument
+})
+
+test_that("'+' can be used right after an unnary op", {
+  expect_equal( +sqrt? 4  + 1, sqrt(4) + 1)
+  expect_equal( -sqrt? 4  + 1, sqrt(4) + 1)
+  expect_equal( !sqrt? 4  + 1, sqrt(4 + 1)) # here `+` is IN the argument
+  expect_equal( ~sqrt? 4  + 1, sqrt(4 + 1)) # here `+` is IN the argument
+})
+
+test_that("'+' can be used right before an unnary op", {
+  expect_equal(1 + +sqrt? 4  , 1 + sqrt(4))
+  expect_equal(1 + -sqrt? 4  , 1 + sqrt(4))
+  expect_equal(1 + !sqrt? 4  , 1 + sqrt(4)) # here `-` is IN the argument
+  expect_equal(1 + ~sqrt? 4  , 1 + sqrt(4)) # here `-` is IN the argument
+})
+
+test_that("'-' can be used right before an unnary op", {
+  expect_equal(1 - +sqrt? 4  , 1 - sqrt(4))
+  expect_equal(1 - -sqrt? 4  , 1 - sqrt(4))
+  expect_equal(1 - !sqrt? 4  , 1 - sqrt(4)) # here `-` is IN the argument
+  expect_equal(1 - ~sqrt? 4  , 1 - sqrt(4)) # here `-` is IN the argument
+})
+
+
+test_that("multi argument rhs works", {
+  expect_equal(head(cars,2), +head? {cars;2} )
+  expect_equal(head(cars,2), +head? {x=cars;n=2} )
+  expect_equal(paste("a","b", "c"), -paste? {"a";"b";"c"} )
+  expect_equal(paste("a","b", "c"), "a" -paste? {"b";"c"} )
+})
+
+test_that("multi argument fails with invalid name", {
+  expect_error(+head? {x=cars;+n=2}, "Invalid argument name")
+})
+
 
 test_that("default dubious ops have the right precedence", {
   expect_equal(1:6, 1:10 +head? 2 * 3)
   expect_equal(4:5, 1:10 +head? 2 + 3)
 })
 
-test_that("n-ary dubious ops work", {
-  x <- "a"
-  expect_equal(paste(x,"b","c"), ?paste? x ? "b" ? "c")
-  expect_equal(paste(x,"b","c"), x ?paste? "b" ? "c")
-})
-
-test_that("custom dubious ops work", {
-  `?!` <- toupper
-  # for it to work in test this must be done
-  assign("?!",`?!`,pos = .GlobalEnv)
-  expect_equal(toupper("foo"), ?!"foo")
-  rm("?!", envir=.GlobalEnv)
-})
+# test_that("n-ary dubious ops work", {
+#   x <- "a"
+#   expect_equal(paste(x,"b","c"), ?paste? x ? "b" ? "c")
+#   expect_equal(paste(x,"b","c"), x ?paste? "b" ? "c")
+# })
+#
+# test_that("custom dubious ops work", {
+#   `?!` <- toupper
+#   # for it to work in test this must be done
+#   assign("?!",`?!`,pos = .GlobalEnv)
+#   expect_equal(toupper("foo"), ?!"foo")
+#   rm("?!", envir=.GlobalEnv)
+# })
 
 test_that("non existent function returns explicit error", {
   expect_error("a" +foobar? "z", "^no function named 'foobar' was found$")
-  expect_error("a" ?foobar? "z", "^no function named 'foobar' was found$")
   expect_true(startsWith(capture.output(?foobar)[1], "No documentation for"))
   expect_error(foo?bar, "^no documentation of type")
 })
 
 test_that("dubious pipe works", {
-  expect_equal(iris +head? 2, head(iris,2))
-  expect_equal(.(iris,head(2)), head(iris,2))
+  expect_equal(pipe(iris,head(.,2)), head(iris,2))
+  expect_equal(iris ~.? head(.,2), head(iris,2))
 })
 
 test_that("deparsing works", {
@@ -75,16 +162,44 @@ test_that("deparsing works", {
   )), "repeat a")
 })
 
-
-test_that("parsing n-ary args are parsed correctly", {
-  expect_equal(parse_qm_args("a"),quote(a))
-  expect_equal(parse_qm_args("a?b"),list(quote(a), quote(b)))
-  expect_equal(parse_qm_args("?a?b"),list(quote(a), quote(b)))
-  expect_equal(parse_qm_args("?a"),quote(a))
+test_that("The deparsing of `< -` and `<-` works",{
+  expect_equal(1:4 <-head? 2, 1:2)
+  expect_equal(1:4 < -head? 2, c(T,F,F,F))
 })
 
 
-test_that("double qm ops can be used with op qm ops", {
-  expect_equal(?dim? iris +head? 2, c(2,5))
-  expect_equal(?head? (+dim? iris) ? 1,150)
+test_that("dubious syntaxes work",{
+  `?add> {x} : {y}` <<- function(x,y) x+y # <<- because needs to be global during tests
+  expect_equal(?add> 2 : 3, 5)
 })
+
+test_that("non syntactic names are supported",{
+  `+cars-` <- cars
+  expect_equal(+head? `+cars-`, head(cars))
+})
+
+test_that("ambiguous sets of operators trigger failure",{
+  `?add> {x}` <<- function(x) x
+  expect_error(?add> 2 : 3, "Ambiguous syntax")
+})
+
+test_that("We can register ops",{
+  register_dubious_syntaxes("?add> {x} : {y}")
+  expect_true("?add> {x} : {y}" %in% getOption("doubt.registered_syntaxes"))
+})
+
+
+
+#
+# test_that("parsing n-ary args are parsed correctly", {
+#   expect_equal(parse_qm_args("a"),quote(a))
+#   expect_equal(parse_qm_args("a?b"),list(quote(a), quote(b)))
+#   expect_equal(parse_qm_args("?a?b"),list(quote(a), quote(b)))
+#   expect_equal(parse_qm_args("?a"),quote(a))
+# })
+#
+#
+# test_that("double qm ops can be used with op qm ops", {
+#   expect_equal(?dim? iris +head? 2, c(2,5))
+#   expect_equal(?head? (+dim? iris) ? 1,150)
+# })

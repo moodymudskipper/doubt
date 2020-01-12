@@ -2,60 +2,56 @@
 # 2) then we should count ++ and instead of startsWith
 # 3) then subset list of symbols to take the right one
 
-#' count_plus("+a")
-#' count_plus("+++b")
 count_plus <- function(x){
-  attr(gregexpr("^\\++", x)[[1]],"match.length")
+  attr(gregexpr("^-\\++-", x)[[1]],"match.length") - 2
 }
 
-# build_placeholder_fun <- function(fun_chr, precedence_op){
-#   body <- substitute({
-#     sc <- sys.call()
-#     # last_arg is the rhs if binary or the rhs if unary
-#     last_arg <- deparse(sc[[length(sc)]])
-#
-#     if(startsWith(last_arg, "+")){
-#       # remove the 1st character
-#       last_arg <- substr(last_arg, 2, nchar(last_arg))
-#       # parse
-#       last_arg <- str2lang(last_arg)
-#       # replace the original argument
-#       sc[[length(sc)]] <- last_arg
-#       # replace the placeholder operator by the right function
-#       sc[[1]] <- quote(op)
-#       # evaluate expression with modified parse tree in initial environment
-#       return(eval.parent(sc))
-#     }
-#     sc[[1]] <- quote(base::precedence_op)
-#     return(eval.parent(sc))
-#   }, list(
-#     op = as.symbol(fun_chr),
-#     precedence_op = as.symbol(precedence_op)))
-#
-#   fun <- as.function(c(alist(e1=, e2=), body))
-# }
-
-build_placeholder_fun2 <- function(funs_chr, precedence_op){
+build_placeholder_fun <- function(funs_chr, precedence_op){
   body <- substitute({
-    sc <- sys.call()
-    # last_arg is the rhs if binary or the rhs if unary
-    last_arg <- paste(deparse(sc[[length(sc)]]),collapse="")
+    #browser()
+    sc <- as.list(sys.call())
+    # message("original call")
+    # print(match.call())
+    # print(sc)
 
-    n_plus <- count_plus(last_arg)
-    if(n_plus > 0){
-      # remove the + characters
-      last_arg <- substr(last_arg, n_plus+1, nchar(last_arg))
-      # parse
-      last_arg <- str2lang(last_arg)
-      # replace the original argument
-      sc[[length(sc)]] <- last_arg
-      # replace the placeholder operator by the right function
-      sc[[1]] <- str2lang(ops[[n_plus]])
-      # evaluate expression with modified parse tree in initial environment
-      return(eval.parent(sc))
+    if(length(sc) == 3 && substr(deparse_rec(sc[[3]]),1,2) != "-+"){
+      # We don't find a `-` sign on the rhs so we replace the op by
+      # the standard version and reevaluate in parent
+      sc[[1]] <- as.call(expression(`::`,base,precedence_op)) #quote(getFromNamespace(precedence_op, "base"))
+      # print(as.call(sc))
+      return(eval.parent(as.call(sc)))
     }
-    sc[[1]] <- quote(base::precedence_op)
-    return(eval.parent(sc))
+    # last_arg is the rhs if binary or the rhs if unary
+    last_arg <- deparse(sc[[length(sc)]])
+
+    n_plus <- count_plus(last_arg[1])
+    # remove the + characters
+    last_arg[1] <- substr(last_arg[1], n_plus+3, nchar(last_arg))
+    last_arg <- paste(last_arg, collapse = "\n")
+    # parse
+    last_arg <- str2lang(last_arg)
+    if(is.call(last_arg) && identical(last_arg[[1]], quote(`{`))){
+      last_arg[[1L]] <- NULL
+      nms <- allNames(last_arg)
+      for(i in seq_along(last_arg)) {
+        arg <- last_arg[[i]]
+        if(is.call(arg) && identical(arg[[1L]], quote(`=`))) {
+          if(!is.symbol(nm <- arg[[2L]])) stop("Invalid argument name: ", deparse(arg[[2L]]),call. = FALSE)
+          nms[i] <- as.character(nm)
+          if(is.null(arg[[3L]])) last_arg[i] <- list(NULL) else
+          last_arg[[i]] <- arg[[3L]]
+        }
+      }
+      names(last_arg) <- nms
+    }
+
+
+    sc[[1]] <- str2lang(ops[[n_plus]])
+    # replace the original argument
+    sc <- as.call(c(sc[-length(sc)],last_arg))
+
+    # evaluate expression with modified parse tree in initial environment
+    eval.parent(sc)
   }, list(
     ops = funs_chr,
     precedence_op = as.symbol(precedence_op)))
