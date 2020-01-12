@@ -84,6 +84,7 @@ test_that("multi argument rhs works", {
   expect_equal(head(cars,2), +head? {x=cars;n=2} )
   expect_equal(paste("a","b", "c"), -paste? {"a";"b";"c"} )
   expect_equal(paste("a","b", "c"), "a" -paste? {"b";"c"} )
+  expect_equal(list(a=NULL, b=NA), +list?{a=NULL;b=NA})
 })
 
 test_that("multi argument fails with invalid name", {
