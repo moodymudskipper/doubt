@@ -75,16 +75,14 @@ benchmarks, R6 definitions, or shiny UI functions.
 #> [1] "a b"
 "a" +paste?{"b"; "c"}
 #> [1] "a b c"
+```
 
+``` r
 library(microbenchmark)
 +microbenchmark?{
   a= sapply(iris, length)
   b= lengths(iris)
 }
-#> Unit: microseconds
-#>  expr  min   lq   mean median    uq   max neval cld
-#>     a 13.8 14.3 16.517   14.7 15.25  74.4   100   a
-#>     b 16.0 16.7 27.546   17.4 18.50 910.2   100   a
 
 library(shiny)
 cat(as.character(
@@ -103,12 +101,6 @@ cat(as.character(
     }
   }
 ))
-#> <div class="container-fluid">
-#>   <div class="row">
-#>     <div class="col-sm-4">4</div>
-#>     <div class="col-sm-3 col-sm-offset-2">3 offset 2</div>
-#>   </div>
-#> </div>
 
 library(R6)
 # example borrowed from https://adv-r.hadley.nz/r6.html and modified 
@@ -122,16 +114,6 @@ R6Class("Person", +list?{
     self$age <- age
   }
 })
-#> <Person> object generator
-#>   Public:
-#>     name: NULL
-#>     age: NA
-#>     initialize: function (name, age = NA) 
-#>     clone: function (deep = FALSE) 
-#>   Parent env: <environment: R_GlobalEnv>
-#>   Locked objects: TRUE
-#>   Locked class: FALSE
-#>   Portable: TRUE
 ```
 
 ## Dubious pipes

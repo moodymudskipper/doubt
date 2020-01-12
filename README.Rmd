@@ -73,7 +73,9 @@ commas can add confusions, such as benchmarks, R6 definitions, or shiny UI funct
 "a" +paste? "b"
 +paste?{"a"; "b"}
 "a" +paste?{"b"; "c"}
+```
 
+```{r, eval = FALSE}
 library(microbenchmark)
 +microbenchmark?{
   a= sapply(iris, length)
