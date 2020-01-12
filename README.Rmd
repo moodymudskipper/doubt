@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-# doubt <img src='man/figures/logo.svg' align="right" height="278" />
+# doubt <img src='man/figures/logo.png' align="right" height="140" />
 
 [![Travis build status](https://travis-ci.org/moodymudskipper/doubt.svg?branch=master)](https://travis-ci.org/moodymudskipper/doubt)
 [![Codecov test coverage](https://codecov.io/gh/moodymudskipper/doubt/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/doubt?branch=master)
