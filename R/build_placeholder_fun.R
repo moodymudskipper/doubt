@@ -8,12 +8,7 @@ count_plus <- function(x){
 
 build_placeholder_fun <- function(funs_chr, precedence_op){
   body <- substitute({
-    #browser()
     sc <- as.list(sys.call())
-    # message("original call")
-    # print(match.call())
-    # print(sc)
-
     if(length(sc) == 3 && substr(deparse_rec(sc[[3]]),1,2) != "-+"){
       # We don't find a `-` sign on the rhs so we replace the op by
       # the standard version and reevaluate in parent
