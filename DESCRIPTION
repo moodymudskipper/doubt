@@ -1,6 +1,6 @@
 Package: doubt
 Title: Enable operators containing "?"
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
 Description: Overload utils::`?` to be able to define more operators with chosen precedence.  
 Depends: R (>= 3.1.0)
