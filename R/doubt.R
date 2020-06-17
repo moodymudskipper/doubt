@@ -52,7 +52,7 @@
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # handle special syntax operators
   ops <- ls(pattern = "\\?", envir = .GlobalEnv)
-  ops <- unique(c(ops,getOption("doubt.registered_ops")))
+  ops <- unique(c(ops,getOption("doubt.registered_syntaxes")))
   ops_compact <- gsub(" ", "", ops)
   ops_lgl <- sapply(ops_compact, unglue::unglue_detect, x = txt)
   if(any(ops_lgl)){
