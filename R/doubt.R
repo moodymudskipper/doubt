@@ -68,35 +68,8 @@
   }
 
   if("devtools_shims" %in% search())
-    `?` <- get("?", envir = as.environment("devtools_shims"))
+    `?` <- get("?", envir = as.environment("devtools_shims")) # nocov
   else
     `?` <- utils::`?`
   eval(call)
 }
-
-
-
-
-
-#
-# regularize <- function(call){
-#   if(!is.call(call)) return(call)
-#   if(calls_unary_plus(call)){
-#     call[[1]] <- op
-#     call[[2]] <- call[[2]][[1]]
-#     call
-#   } else {
-#     as.call(lapply(call, regularize))
-#   }
-# }
-#
-#
-# calls_unary_plus <- function(call){
-#   length(call) > 1 && length(call[[3]]) == 2 && identical(call[[3]][[1]],quote(`+`))
-# }
-#
-# call <- quote(y -+a / b)
-# calls_unary_plus(quote(y /+a + b))
-
-
-

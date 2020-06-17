@@ -43,36 +43,3 @@ build_op_qm_call_and_ops <- function(txt, pattern) {
 pipe <- function(lhs, rhs) {
     eval(substitute(rhs), envir = list(. = lhs), enclos = parent.frame())
 }
-
-# build_op_qm_call_and_1op <- function(txt, op_qm_pattern){
-#   m <- gregexpr(op_qm_pattern, txt, perl = TRUE)[[1]]
-#   # cs like captured string
-#
-#   cs <- substring(txt, attr(m, "capture.start") , attr(
-#     m, "capture.start") + attr(m, "capture.length") - 1)
-#   fun_chr    <- cs[[3]] # e.g. foo
-#   op <- get0(fun_chr)
-#   if(is.null(op)) stop(sprintf("no function named '%s' was found", fun_chr))
-#   #cs[1:2] <- regex.escape(cs[1:2])
-#   dubious_op    <- cs[[1]] # e.g %%foo?
-#   precedence_op <- cs[[2]] # e.g. %%
-#
-#   # e.g. replace %%foo? by %%+
-#   txt <- gsub(regex.escape(dubious_op), paste0(precedence_op,"+"), txt)
-#   # parse it
-#   call <- str2lang(txt)
-#   fun <- build_placeholder_fun(fun_chr, precedence_op)
-#   op <- setNames(list(fun), precedence_op)
-#   list(call = call, op = op)
-# }
-
-# build_double_qm_call <- function(txt, double_qm_pattern){
-#   fun_chr <- gsub(double_qm_pattern, "\\2", txt)
-#   op <- get0(fun_chr)
-#   if(is.null(op)) stop(sprintf("no function named '%s' was found", fun_chr))
-#
-#   lhs_rhs <- strsplit(txt, paste0("\\?",fun_chr,"\\?"))[[1]]
-#   args_chr <- unlist(strsplit(lhs_rhs,"?", TRUE))
-#   args <- parse(text= args_chr)
-#   call <- as.call(c(as.symbol(fun_chr),args))
-# }
