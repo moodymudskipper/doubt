@@ -75,7 +75,9 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
     stop("Ambiguous syntax caused by operators: ", toString(ops[ops_lgl]))
   }
   args <- unglue::unglue(txt, ops_compact[ops_lgl])[[1]]
-  return(eval(as.call(parse(text=c(paste0("`",ops[ops_lgl], "`"), args)))))
+  call <- as.call(parse(text=c(paste0("`",ops[ops_lgl], "`"), args)))
+  print(call)
+  return(eval.parent(call))
   }
 
   if("devtools_shims" %in% search())
