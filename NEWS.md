@@ -1,7 +1,5 @@
-# doubt 0.0.0.9001
+# doubt 0.1.0
 
 * Added a `NEWS.md` file to track changes to the package.
-* custom dubious operators are replaced with dubious syntaxes, which are more
-  flexible and more differentiable from unary and binary dubious operatorsµ
-* tidyverse features have been removed as they were too different and clunky
-* Readme and tests were refactored
+* dubious syntaxes are defined by glue-like strings, which is much more compact,
+  intuitive, and flexible than the previous way.

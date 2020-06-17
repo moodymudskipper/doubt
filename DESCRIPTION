@@ -1,6 +1,6 @@
 Package: doubt
 Title: Enable Operators Containing the '?' Symbol
-Version: 0.0.0.9001
+Version: 0.1.0
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
 Description: Overload utils::`?` to build unary and binary operators from existing functions, 
     piping operators of different precedences, and flexible syntaxes.  
