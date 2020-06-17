@@ -170,7 +170,7 @@ test_that("The deparsing of `< -` and `<-` works",{
 
 
 test_that("dubious syntaxes work",{
-  `?add> {x} : {y}` <<- function(x,y) x+y # <<- because needs to be global during tests
+  "?add> {x} : {y}" <<- "{x} +  {y}" # <<- because needs to be global during tests
   expect_equal(?add> 2 : 3, 5)
 })
 
@@ -180,7 +180,7 @@ test_that("non syntactic names are supported",{
 })
 
 test_that("ambiguous sets of operators trigger failure",{
-  `?add> {x}` <<- function(x) x
+  "?add> {x}" <<- "{x}"
   expect_error(?add> 2 : 3, "Ambiguous syntax")
 })
 

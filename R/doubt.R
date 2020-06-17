@@ -1,18 +1,3 @@
-regex.escape <- function(string) {
-  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", string)
-}
-
-# two question marks surrounding any legal function name
-double_qm_pattern <- "^[^?]*?(\\?([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
-
-
-
-op_qm_pattern <- "^.*?(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?).*$"
-# the following to get several matches
-op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)"
-
-#dubious_pattern <- "^.*?[([0-9a-z_.]*)\\?.*$"
-
 #' Modified question mark operator
 #'
 #' `?` was modified to allow definition of new operators (unary, binary or n-ary).
@@ -74,10 +59,12 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
   if(sum(ops_lgl) > 1) {
     stop("Ambiguous syntax caused by operators: ", toString(ops[ops_lgl]))
   }
-  args <- unglue::unglue(txt, ops_compact[ops_lgl])[[1]]
-  call <- as.call(parse(text=c(paste0("`",ops[ops_lgl], "`"), args)))
-  print(call)
-  return(eval.parent(call))
+
+  op <- ops_compact[ops_lgl]
+  args <- unglue::unglue(txt, op)[[1]]
+  val <- eval.parent(str2lang(paste0("`",ops[ops_lgl], "`")))
+  call_chr <- unglue::unglue_sub(val, val, args)
+  return(eval.parent(str2lang(call_chr)))
   }
 
   if("devtools_shims" %in% search())
