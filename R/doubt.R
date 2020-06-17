@@ -78,7 +78,10 @@ op_qm_pattern2 <- "(([<]*[-+:*\\/<>!&|~=%^][%&|=]?)([a-zA-Z.][a-zA-Z0-9._]*)\\?)
   return(eval(as.call(parse(text=c(paste0("`",ops[ops_lgl], "`"), args)))))
   }
 
-  `?` <- utils::`?`
+  if("devtools_shims" %in% search())
+    `?` <- get("?", envir = as.environment("devtools_shims"))
+  else
+    `?` <- utils::`?`
   eval(call)
 }
 
