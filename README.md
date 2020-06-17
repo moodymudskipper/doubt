@@ -199,17 +199,17 @@ area(3,4)
 #> [1] 12
 ```
 
-### Registering a custom dubious op in a package
+### Registering a dubious syntax in a package
 
-To be recognized by *doubt* a custom operator must either :
+To be recognized by *doubt* a dubious syntax must either :
 
   - be defined in the global environment
   - be defined in a package AND registered
 
-To define a dubious syntax in your package should import *doubt* and
-reexport .
-
-You can do so by adding this code to your package if you use *roxygen2*:
+To define dubious syntaxes in your package should import *doubt*, which
+you can do by running `devtools::use_package("doubt")`, then I suggest
+you store them in a script following this template (if you use
+*roxygen2*):
 
 ``` r
 #' Modified question mark operator
@@ -218,15 +218,29 @@ You can do so by adding this code to your package if you use *roxygen2*:
 #' @inheritParams doubt::`?`
 #' @export
 `?` <- doubt::`?`
-```
 
-Additionally you should add an `.onAttach` function to your package
-(usually done in a `zz.R` file) or edit yours so it updates *doubt*’s
-options, as in the following :
-
-``` r
 .onAttach <- function(libname, pkgname) {
   doubt::register_dubious_syntaxes(c("?add: ({x})({y})", "{expr}?v"))
   invisible()
 }
+
+#' dubious syntaxes
+#'
+#' @name dubious
+NULL
+
+#' @export
+#' @rdname dubious
+#' @usage add: (x)(y)
+#' @examples
+#' ?add: (1)(2)
+"?add: ({x})({y})" <- "{x} + {y}"
+
+#' @export
+#' @rdname dubious
+#' @usage expr?v
+"{expr}?v" <- "View({expr})"
 ```
+
+In this example, we document on the same page both syntaxes. Note that
+they must be registered in the definition of `.onAttach()`.
