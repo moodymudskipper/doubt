@@ -19,7 +19,9 @@ operators.
 .
 Standard usage as documented in \code{?utils::Question} still works.
 }
-\details{
+\section{dubious operators}{
+
+
 Every accessible function, custom defined or base/packaged, can be called as
 an infix operator, for example \code{1:5 \%\%intersect? 3:7} is equivalent to
 \code{intersect(1:5, 3:7)}. In that case, \verb{\%\%intersect?} will have the precedence
@@ -27,16 +29,29 @@ of \code{\%\%}, which is the most intuitive,
 but any precedence including and below unary \code{+} can be used, for instance
 \verb{*intersect?} will have the precedence of \code{*}.
 
-N-ary operators are supported for \verb{?foo?} operators, for instance
-\code{?paste? "a" ? "b" ? "c"} is the same as \code{paste("a", "b", "c")},
-\code{"a" ?paste? "b" ? "c"} works as well.
-
-Define any operator containing \verb{?} and that can be used in a way that is
-syntactically valid and it will be executed with the same operator precedence
-as \verb{?}, which is just below \verb{<-} and just above \code{=} (note that \code{?Syntax} is
-inaccurate in this regard at time of writing). In practice this mean you can
-assign with \code{x = "a" ?paste? "b" ? "c"} but not with \code{x <- "a" ?paste? "b" ? "c"}
+Unary operators can be used to, for instance \code{~head? x} is the same as
+\code{head(x)}. This form can also be used with several arguments, but in this
+case we need to write \verb{~head? \{x ; n)} for instance, which is convenient to go
+to the next line without the need of a comma.
 }
+
+\section{dubious pipes}{
+
+
+We can pipe with a chosen precedence by using a dubious pipe, for instance
+\code{x + y ~saveRDS? file} will save \code{x + y}, not just \code{x}
+
+We can pipe with a chosen precedence by using a dubious pipe, for instance
+\code{x + y ~saveRDS? file} will save \code{x + y}, not just \code{x}
+}
+
+\section{dubious syntaxes}{
+
+
+defining \code{"?add: ({x})({y})" <- "{x} + {y}"} will allow us to call
+\code{?add: (a)(b)} to add \code{a} abd \code{b}.
+}
+
 \examples{
 cars +head? 2
 +head? cars

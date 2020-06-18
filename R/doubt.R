@@ -7,6 +7,8 @@
 #' .
 #' Standard usage as documented in `?utils::Question` still works.
 #'
+#' @section dubious operators:
+#'
 #' Every accessible function, custom defined or base/packaged, can be called as
 #'  an infix operator, for example `1:5 %%intersect? 3:7` is equivalent to
 #'  `intersect(1:5, 3:7)`. In that case, `%%intersect?` will have the precedence
@@ -14,16 +16,23 @@
 #' but any precedence including and below unary `+` can be used, for instance
 #' `*intersect?` will have the precedence of `*`.
 #'
-#' N-ary operators are supported for `?foo?` operators, for instance
-#' `?paste? "a" ? "b" ? "c"` is the same as `paste("a", "b", "c")`,
-#' `"a" ?paste? "b" ? "c"` works as well.
+#' Unary operators can be used to, for instance `~head? x` is the same as
+#' `head(x)`. This form can also be used with several arguments, but in this
+#' case we need to write `~head? {x ; n)` for instance, which is convenient to go
+#' to the next line without the need of a comma.
 #'
-#' Define any operator containing `?` and that can be used in a way that is
-#' syntactically valid and it will be executed with the same operator precedence
-#' as `?`, which is just below `<-` and just above `=` (note that `?Syntax` is
-#' inaccurate in this regard at time of writing). In practice this mean you can
-#' assign with `x = "a" ?paste? "b" ? "c"` but not with `x <- "a" ?paste? "b" ? "c"`
+#' @section dubious pipes:
 #'
+#' We can pipe with a chosen precedence by using a dubious pipe, for instance
+#' `x + y ~saveRDS? file` will save `x + y`, not just `x`
+#'
+#' We can pipe with a chosen precedence by using a dubious pipe, for instance
+#' `x + y ~saveRDS? file` will save `x + y`, not just `x`
+#'
+#' @section dubious syntaxes:
+#'
+#' defining `"?add: ({x})({y})" <- "{x} + {y}"` will allow us to call
+#' `?add: (a)(b)` to add `a` abd `b`.
 #'
 #' @param e1 lhs
 #' @param e2 rhs
