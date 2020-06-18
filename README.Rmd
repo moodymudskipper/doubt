@@ -67,7 +67,7 @@ but sometimes `~fun?` can be helpful due to its low precedence, for instance
 `x + y ~saveRDS? file` will save `x + y` where `x + y %%saveRDS? file` would have
 saved `y`.
 
-Unary operators can be used too, which is nice for interractive use as we spare
+Unary operators can be used too, which is nice for interactive use as we spare
 some parentheses. Unary operators are `+`, `-`, `!` or `~`.  Generally
 `~` will be more adaped due to its low precedence but `+` is less visually
 confusing as unary `+` is rarely used in practice.

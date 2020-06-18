@@ -32,7 +32,7 @@
 #' @section dubious syntaxes:
 #'
 #' defining `"?add: ({x})({y})" <- "{x} + {y}"` will allow us to call
-#' `?add: (a)(b)` to add `a` abd `b`.
+#' `?add: (a)(b)` to add `a` and `b`.
 #'
 #' @param e1 lhs
 #' @param e2 rhs
