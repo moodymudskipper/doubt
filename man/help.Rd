@@ -49,7 +49,7 @@ We can pipe with a chosen precedence by using a dubious pipe, for instance
 
 
 defining \code{"?add: ({x})({y})" <- "{x} + {y}"} will allow us to call
-\code{?add: (a)(b)} to add \code{a} abd \code{b}.
+\code{?add: (a)(b)} to add \code{a} and \code{b}.
 }
 
 \examples{
