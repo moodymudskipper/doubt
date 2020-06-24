@@ -2,7 +2,7 @@ Package: doubt
 Title: Enable Operators Containing the '?' Symbol
 Version: 0.1.0
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
-Description: Overload utils::`?` to build unary and binary operators from existing functions, 
+Description: Overload utils::'?' to build unary and binary operators from existing functions, 
     piping operators of different precedence, and flexible syntaxes.  
 Depends: R (>= 3.1.0)
 License: GPL-3
