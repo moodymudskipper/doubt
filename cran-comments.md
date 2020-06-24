@@ -8,3 +8,7 @@
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+
+## Answering Swetlana Herbrandt's comments 2020-06-24
+
+utils::`?` was replaced by utils::'?' in description test
