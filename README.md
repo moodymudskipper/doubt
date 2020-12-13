@@ -36,7 +36,7 @@ extreme.
 Install with :
 
 ``` r
-remotes::install_github("moodymudskipper/doubt")
+install.packages("doubt")
 ```
 
 ### Dubious operators
